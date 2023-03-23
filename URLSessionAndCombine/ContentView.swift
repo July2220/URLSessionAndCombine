@@ -8,10 +8,18 @@
 import SwiftUI
 
 struct ContentView: View {
+    @ObservedObject var viewModel = BeerViewModel()
+    
     var body: some View {
-        BeersList()
+        BeersList(
+            beers: viewModel.state.beers,
+            isLoading: viewModel.state.canLoadNextPage,
+            onScrolledAtBottom: viewModel.fetchNextPageIfPossible
+        )
+        .onAppear(perform: viewModel.fetchNextPageIfPossible)
     }
 }
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {

@@ -8,25 +8,6 @@
 import Foundation
 import Combine
 
-
-
-enum PunkAPI {
-    static let pageSize = 25 //每页多少条
-    
-    static func searchBeers(page: Int) -> AnyPublisher<[Beer], Error> {
-        let url = URL(string:"https://api.punkapi.com/v2/beers?page=\(page)&per_page=\(Self.pageSize)")!
-        return URLSession.shared
-            .dataTaskPublisher(for: url) // 1. Create a publisher that wraps a URL session data task
-            .tryMap { try JSONDecoder().decode(BeerSearchResult<Beer>.self, from: $0.data).items }// 2.Decode the response as BeerSearchResult. This is an intermediate type created for the purpose of parsing JSON.
-            .receive(on: DispatchQueue.main) // 3.Receive response on the main thread.
-            .eraseToAnyPublisher()
-    }
-}
-
-struct BeerSearchResult<T: Codable>: Codable {
-    let items: [T]
-}
-
 struct Beer: Codable, Identifiable, Equatable {
     let id: Int
     let name: String

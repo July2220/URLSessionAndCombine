@@ -8,10 +8,9 @@
 import SwiftUI
 
 struct BeersList: View {
-    
-    let beers: [Beer] 
-    let isLoading: Bool
-    let onScrolledAtBottom: () -> Void
+    let beers: [Beer]
+    let isLoading: Bool 
+    let onScrolledAtBottom: (() -> Void)
     
     //The body contains a list and a loading indicator below it.
     var body: some View {

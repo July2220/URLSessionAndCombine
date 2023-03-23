@@ -8,6 +8,21 @@
 import SwiftUI
 import Combine
 
+enum PunkAPI {
+    static let pageSize = 25 //每页多少条
+    
+    static func searchBeers(page: Int) -> AnyPublisher<[Beer], Error> {
+        let url = URL(string:"https://api.punkapi.com/v2/beers?page=\(page)&per_page=\(Self.pageSize)")!
+        return URLSession.shared
+            .dataTaskPublisher(for: url) // 1. Create a publisher that wraps a URL session data task
+            .tryMap { try JSONDecoder().decode([Beer].self, from: $0.data) }// 2.Decode the response as BeerSearchResult. This is an intermediate type created for the purpose of parsing JSON.
+            .receive(on: DispatchQueue.main) // 3.Receive response on the main thread.
+            .eraseToAnyPublisher()
+    }
+}
+
+
+
 //1.
 class BeerViewModel: ObservableObject {
     @Published private(set) var state = State()
@@ -41,18 +56,5 @@ class BeerViewModel: ObservableObject {
         var beers: [Beer] = []
         var page: Int = 1
         var canLoadNextPage = true
-    }
-}
-
-struct RepositoriesListContainer: View {
-    @ObservedObject var viewModel: BeerViewModel
-    
-    var body: some View {
-        BeersList(
-            beers: viewModel.state.beers,
-            isLoading: viewModel.state.canLoadNextPage,
-            onScrolledAtBottom: viewModel.fetchNextPageIfPossible
-        )
-        .onAppear(perform: viewModel.fetchNextPageIfPossible)
     }
 }

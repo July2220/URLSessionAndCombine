@@ -16,7 +16,6 @@ struct BeerRow: View {
             Text(beer.tagline)
                 .foregroundColor(.secondary)
         }
-        .frame(idealWidth: .infinity, maxWidth: .infinity, alignment: .center)
     }
 }
 
